@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zombie Survival</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; overflow: hidden; color: white; font-family: Arial; }
+        canvas { display: block; background: #222; }
+    </style>
+</head>
+<body>
+    <canvas id="game"></canvas>
+    <script>
+        const canvas = document.getElementById("game");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+
+        let player = { x: canvas.width/2, y: canvas.height/2, size: 20 };
+        let bullets = [];
+        let enemies = [];
+        
+        window.addEventListener("mousemove", e => { player.x = e.clientX; player.y = e.clientY; });
+        window.addEventListener("click", () => { bullets.push({ x: player.x, y: player.y, v: -10 }); });
+
+        function spawn() { enemies.push({ x: Math.random()*canvas.width, y: 0, size: 25 }); }
+        setInterval(spawn, 1000);
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "blue"; ctx.beginPath(); ctx.arc(player.x, player.y, player.size, 0, Math.PI*2); ctx.fill();
+            
+            bullets.forEach((b, i) => { 
+                b.y += b.v; ctx.fillStyle = "yellow"; ctx.fillRect(b.x, b.y, 5, 10);
+                if(b.y < 0) bullets.splice(i, 1);
+            });
+
+            enemies.forEach((en, i) => {
+                en.y += 2; ctx.fillStyle = "green"; ctx.fillRect(en.x, en.y, en.size, en.size);
+                if(en.y > canvas.height) { alert("ZOMBİLER OKULU BASTI!"); location.reload(); }
+            });
+            requestAnimationFrame(draw);
+        }
+        draw();
+    </script>
+</body>
+</html>
